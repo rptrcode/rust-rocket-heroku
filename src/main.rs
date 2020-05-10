@@ -8,7 +8,7 @@ async fn main() -> std::io::Result<()> {
             .route("/again", web::get().to(index2))
             .route("/rptr", web::get().to(rptr))
     })
-        .bind("127.0.0.1:8080")?
+        .bind("0.0.0.0:8080")?
         .run()
         .await
 }
@@ -18,6 +18,7 @@ async fn index() -> impl Responder {
 }
 
 async fn rptr() -> impl Responder {
+    format!("rptr");
     HttpResponse::Ok().body("Hello rptr!")
 }
 
