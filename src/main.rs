@@ -8,7 +8,7 @@ async fn main() -> std::io::Result<()> {
             .route("/again", web::get().to(index2))
             .route("/rptr", web::get().to(rptr))
     })
-        .bind("0.0.0.0:8080")?
+        .bind("0.0.0.0:3000")?
         .run()
         .await
 }
