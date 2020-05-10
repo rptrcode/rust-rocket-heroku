@@ -1,27 +1,32 @@
-use actix_web::{App, HttpResponse, HttpServer, Responder, web};
+//! Example actix-web application.
+//!
+//! This code is adapted from the front page of the [Actix][] website.
+//!
+//! [actix]: https://actix.rs/docs/
 
-#[actix_rt::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
+use std::env;
+
+use actix_web::{App, HttpRequest, Responder, server};
+
+fn greet(req: &HttpRequest) -> impl Responder {
+    let to = req.match_info().get("name").unwrap_or("World");
+    format!("Hello {}!", to)
+}
+
+fn main() {
+    // Get the port number to listen on.
+    let port = env::var("PORT")
+        .unwrap_or_else(|_| "3000".to_string())
+        .parse()
+        .expect("PORT must be a number");
+
+    // Start a server, configuring the resources to serve.
+    server::new(|| {
         App::new()
-            .route("/", web::get().to(index))
-            .route("/again", web::get().to(index2))
-            .route("/rptr", web::get().to(rptr))
+            .resource("/", |r| r.f(greet))
+            .resource("/{name}", |r| r.f(greet))
     })
-        .bind("0.0.0.0:3000")?
-        .run()
-        .await
-}
-
-async fn index() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
-
-async fn rptr() -> impl Responder {
-    format!("rptr");
-    HttpResponse::Ok().body("Hello rptr!")
-}
-
-async fn index2() -> impl Responder {
-    HttpResponse::Ok().body("Hello world again!")
+        .bind(("0.0.0.0", port))
+        .expect("Can not bind to port 8000")
+        .run();
 }
