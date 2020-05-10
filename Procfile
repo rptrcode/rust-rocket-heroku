@@ -1,1 +1,1 @@
-web: ./target/release/rust-hello
+web: ./target/release/rusttest1
